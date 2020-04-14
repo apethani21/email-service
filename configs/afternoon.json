@@ -1,0 +1,7 @@
+{
+    "twitter": {"screen_name": "northernline",
+                "tweet_count": 5},
+    "weather": [{"hendon_central": 23},
+                {"goodge_street": 23}],
+    "articles": 5
+}
