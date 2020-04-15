@@ -83,7 +83,6 @@ def query_met_office_prediction(**kwargs):
     for cfg in weather_config:
         area, hour = tuple(cfg.items())[0]
         timestamp = get_weather_timestamp(hour)
-        lgg.info(f"searching for area={area}, timestamp={timestamp}")
         latest_predictions = collection.find_one(filter={"_area": area},
                                                  sort=[("_id", -1)])
         time_series = latest_predictions["features"][0]["properties"]["timeSeries"]
@@ -92,5 +91,5 @@ def query_met_office_prediction(**kwargs):
             if datapoint["time"] == timestamp:
                 predictions[area] = datapoint
                 predictions[area]["time"] = utc_to_gmt(predictions[area]["time"])
-                lgg.info(f"weather for area={area}, timestamp={timestamp} found")
+    lgg.info(f"expected {len(weather_config)} weather predictions, got {len(predictions)} weather predictions")
     return predictions
