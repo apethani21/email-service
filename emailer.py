@@ -170,8 +170,8 @@ def send_email(html, use_ses=True):
             server.login(sender_email, password)
             lgg.info("sending message")
             server.send_message(message, sender_email, receiver_email)
-            lgg.info("message sent")
-            return
+    lgg.info("message sent")
+    return
 
 
 if __name__ == "__main__":
