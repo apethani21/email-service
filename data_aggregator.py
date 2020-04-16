@@ -35,13 +35,11 @@ def upload(source, **kwargs):
         db = client["twitter"]
         collection = db[kwargs["screen_name"]]
         max_id_doc = collection.find_one(sort=[("_id", -1)])
-        if max_id_doc is None:  # no documents
-            max_id = 0
-        else:
-            max_id = max_id_doc["_id"]
+        if max_id_doc is not None:
+            kwargs["since_id"] = max_id_doc["_id"]
 
         lgg.info(f"Aggregating from {source}")
-        kwargs["since_id"] = max_id
+
         tweets = get_tweets(**kwargs)
         lgg.info(f"{len(tweets)} tweets retrieved")
 
