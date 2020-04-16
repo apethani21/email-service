@@ -63,7 +63,7 @@ def query_wiki_current_events(ts=None):
     client = pymongo.MongoClient()
     db = client["wiki"]
     collection = db["currentEvents"]
-    doc = collection.find_one({"_id": doc_id+5})
+    doc = collection.find_one({"_id": doc_id})
     return doc
 
 
@@ -81,3 +81,4 @@ def query_news_articles(**config):
             count -= 1
             if count == 0:
                 return articles
+
