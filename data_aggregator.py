@@ -100,6 +100,7 @@ def upload(source, **kwargs):
             return
         if not news["articles"]:
             lgg.info("No new articles")
+            return
         news.pop("status")
         news.pop("totalResults")
         result = collection.insert_one(news)
