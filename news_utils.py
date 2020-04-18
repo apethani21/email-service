@@ -2,6 +2,7 @@ import os
 import bs4
 import pymongo
 import requests
+import logging as lgg
 from time import sleep
 from datetime import datetime, time
 from newsapi import NewsApiClient
@@ -9,6 +10,9 @@ from newsapi import NewsApiClient
 required_sources = ('BBC News', 'Bloomberg', 'CNBC',
                     'Financial Times', 'Politico',
                     'Reuters', 'Sky News')
+
+lgg.basicConfig(level=lgg.INFO,
+                format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def get_news_api_key():
