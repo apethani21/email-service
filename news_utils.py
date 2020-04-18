@@ -48,12 +48,15 @@ def get_wiki_current_events():
     for anchor in anchors:
         anchor.replace_with_children()
     today_block = soup.find(id=today_date)
-    html = today_block.contents[-1].renderContents().decode()
-    return {
-        '_id': int(now.strftime("%Y%m%-d")),
-        'date': now.strftime("%-d %b %Y"),
-        'text': html
-    }
+    if today_block is None:
+        return None
+    else:
+        html = today_block.contents[-1].renderContents().decode()
+        return {
+            '_id': int(now.strftime("%Y%m%-d")),
+            'date': now.strftime("%-d %b %Y"),
+            'text': html
+        }
 
 
 def query_wiki_current_events(ts=None):
