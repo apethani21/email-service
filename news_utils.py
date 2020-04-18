@@ -2,6 +2,7 @@ import os
 import bs4
 import pymongo
 import requests
+from time import sleep
 from datetime import datetime, time
 from newsapi import NewsApiClient
 
@@ -30,9 +31,16 @@ def get_google_news(sources, from_param=None):
         from_param = (datetime
                       .combine(datetime.today(), time.min)
                       .strftime("%Y-%m-%dT%H:%M:%S"))
-    news = client.get_everything(sources=sources,
-                                 from_param=from_param,
-                                 language='en')
+    try:
+        news = client.get_everything(sources=sources,
+                                     from_param=from_param,
+                                     language='en')
+    except requests.exceptions.ReadTimeout as e:
+        lgg.warning(f"requests.exceptions.ReadTimeout - retrying after 5 minutes")
+        sleep(300)
+        news = client.get_everything(sources=sources,
+                                     from_param=from_param,
+                                     language='en')
     now = datetime.now()
     news["_id"] = int(now.strftime("%Y%m%-d%H%M"))
     return news
@@ -48,12 +56,15 @@ def get_wiki_current_events():
     for anchor in anchors:
         anchor.replace_with_children()
     today_block = soup.find(id=today_date)
-    html = today_block.contents[-1].renderContents().decode()
-    return {
-        '_id': int(now.strftime("%Y%m%-d")),
-        'date': now.strftime("%-d %b %Y"),
-        'text': html
-    }
+    if today_block is None:
+        return None
+    else:
+        html = today_block.contents[-1].renderContents().decode()
+        return {
+            '_id': int(now.strftime("%Y%m%-d")),
+            'date': now.strftime("%-d %b %Y"),
+            'text': html
+        }
 
 
 def query_wiki_current_events(ts=None):

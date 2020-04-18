@@ -70,11 +70,15 @@ def upload(source, **kwargs):
             max_id = max_id_doc["_id"]
         lgg.info(f"Aggregating from {source}")
         current_events = get_wiki_current_events()
-        collection.replace_one(filter={'_id': current_events['_id']},
-                               replacement=current_events,
-                               upsert=True)
-        lgg.info(f"Document {current_events['_id']} updated")
-        return
+        if current_events is None:
+            lgg.info("No section published for today's current events on wiki")
+            return
+        else:
+            collection.replace_one(filter={'_id': current_events['_id']},
+                                replacement=current_events,
+                                upsert=True)
+            lgg.info(f"Document {current_events['_id']} updated")
+            return
 
     elif source == 'google-news':
         db = client["googlenews"]
