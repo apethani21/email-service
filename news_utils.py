@@ -96,4 +96,3 @@ def query_news_articles(**config):
             count -= 1
             if count == 0:
                 return articles
-

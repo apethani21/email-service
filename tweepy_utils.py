@@ -37,9 +37,16 @@ class TweetGetter(API, OAuthHandler):
         self.api = API(self._auth)
 
     @staticmethod
+    def _id_cleaner(ts):
+        if len(ts) == 11:
+            return ts[:6] + "0" + ts[6:]
+        else:
+            return ts
+
+    @staticmethod
     def clean_status_object(status):
         status_json = status._json
-        status_json["_id"] = status_json.pop("id")
+        status_json["_id"] = _id_cleaner(status_json.pop("id"))
         for key in "id_str truncated display_text_range user".split():
             try:
                 status_json.pop(key)
