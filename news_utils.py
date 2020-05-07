@@ -46,7 +46,7 @@ def get_google_news(sources, from_param=None):
                                      from_param=from_param,
                                      language='en')
     now = datetime.now()
-    news["_id"] = int(now.strftime("%Y%m%-d%H%M"))
+    news["_id"] = int(now.strftime("%Y%m%d%H%M"))
     return news
 
 
