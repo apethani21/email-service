@@ -46,7 +46,7 @@ class TweetGetter(API, OAuthHandler):
     @staticmethod
     def clean_status_object(status):
         status_json = status._json
-        status_json["_id"] = _id_cleaner(status_json.pop("id"))
+        status_json["_id"] = TweetGetter._id_cleaner(status_json.pop("id"))
         for key in "id_str truncated display_text_range user".split():
             try:
                 status_json.pop(key)
