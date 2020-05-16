@@ -38,6 +38,7 @@ class TweetGetter(API, OAuthHandler):
 
     @staticmethod
     def _id_cleaner(ts):
+        ts = str(ts)
         if len(ts) == 11:
             return ts[:6] + "0" + ts[6:]
         else:
