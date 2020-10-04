@@ -59,7 +59,7 @@ class TweetGetter(API, OAuthHandler):
 def query_tweets(**config):
     client = pymongo.MongoClient()
     screen_name = config["twitter"]["screen_name"]
-    count = config["twitter"]["tweet_count"]
+    count = config["twitter"].get("tweet_count", 5)
     db = client["twitter"]
     collection = db[screen_name]
     tweets = (collection

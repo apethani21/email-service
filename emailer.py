@@ -81,6 +81,8 @@ def weather_to_html(weather_info):
 
 
 def tweets_to_html(tweets):
+    if not tweets:
+        return "<b> No recent relevant travel updates </b>"
     html_bodies = []
     for tweet in tweets:
         time = tweet["created_at"][4:-11]
@@ -107,7 +109,7 @@ def current_events_to_html(current_events):
 
 def create_email_html_body(**config):
     weather = query_met_office_prediction(**config)
-    tweets = query_tweets(**config)
+    tweets = [tweet for tweet in query_tweets(**config) if "Northern Line" in tweet["full_text"]]
     current_events = query_wiki_current_events()
     news = query_news_articles(**config)
 
