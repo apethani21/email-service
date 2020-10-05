@@ -91,7 +91,7 @@ def journey_info_to_html(journey_info):
         """
     else:
         html = f"""
-        {clean_start} to {clean_end} expected to take <b>{journey_time} minutes.</b>.
+        {clean_start} to {clean_end} expected to take <b>{journey_time} minutes</b><br>.
         """
     return html
 
