@@ -2,7 +2,7 @@
 
 This is a significant update on [morning-email-update](https://github.com/apethani21/morning-email-update). Here, we:
 
-- Get travel related tweets from Twitter using [tweepy](https://www.tweepy.org/)
+- Get travel related updates from Twitter using [tweepy](https://www.tweepy.org/) and the [Citymapper API](https://citymapper.3scale.net/)
 - Get weather information from the [Met-Office](https://metoffice.apiconnect.ibmcloud.com/metoffice/production/)
 - Scrape current events from [Wikipedia](https://en.m.wikipedia.org/wiki/Portal:Current_events)
 - Get news article from [Google's news API](https://newsapi.org/s/google-news-api)
