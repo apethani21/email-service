@@ -13,6 +13,7 @@ from email.mime.multipart import MIMEMultipart
 from tweepy_utils import query_tweets
 from met_office_utils import query_met_office_prediction, bearing_to_cardinal
 from news_utils import query_wiki_current_events, query_news_articles
+from city_mapper_utils import get_journey_info
 
 
 lgg.basicConfig(level=lgg.INFO,
@@ -80,6 +81,21 @@ def weather_to_html(weather_info):
     return "<br>".join(html_bodies)
 
 
+def journey_info_to_html(journey_info):
+    clean_start = ' '.join([s.capitalize() for s in journey_info['start'].split('_')])
+    clean_end = ' '.join([s.capitalize() for s in journey_info['end'].split('_')])
+    journey_time = journey_info['travel_time'].get('travel_time_minutes')
+    if journey_time is None:
+        html = """
+        Failed to get journey time information.
+        """
+    else:
+        html = f"""
+        {clean_start} to {clean_end} expected to take <b>{journey_time} minutes</b><br>.
+        """
+    return html
+
+
 def tweets_to_html(tweets):
     if not tweets:
         return "<b> No recent relevant travel updates </b>"
@@ -112,11 +128,14 @@ def create_email_html_body(**config):
     tweets = [tweet for tweet in query_tweets(**config) if "Northern Line" in tweet["full_text"]]
     current_events = query_wiki_current_events()
     news = query_news_articles(**config)
+    journey_info = get_journey_info(**config)
 
     weather_html = weather_to_html(weather)
     lgg.info("weather html body created")
     tweets_html = tweets_to_html(tweets)
     lgg.info("tweets html body created")
+    journey_time_html = journey_info_to_html(journey_info)
+    lgg.info("journey time html body created")
     current_events_html = current_events_to_html(current_events)
     lgg.info("current events html body created")
     news_html = news_to_html(news)
@@ -129,6 +148,7 @@ def create_email_html_body(**config):
               <h2 style="font-size:20px;">Weather</h2> <br>
               {weather_html} <br>
               <h2 style="font-size:20px;">Travel</h2> <br>
+              {journey_time_html}<br>
               {tweets_html} <br>
               {current_events_html} <br>
               <h2 style="font-size:20px;">Latest Headlines</h2> <br>
@@ -179,7 +199,10 @@ def send_email(html, use_ses=True):
 if __name__ == "__main__":
     args = sys.argv[1:]
     args = dict([arg.split('=') for arg in args])
-    config_name = args['config']
+    try:
+        config_name = args['config']
+    except KeyError:
+        raise KeyError("You need to pass a command line argument e.g. config=morning.json")
     lgg.info(f"config: {config_name}")
     with open(f'./configs/{config_name}', 'r') as f:
         config = json.loads(f.read())
