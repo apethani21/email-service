@@ -3,6 +3,10 @@ import json
 import pytz
 import datetime
 import requests
+import logging as lgg
+
+lgg.basicConfig(level=lgg.INFO,
+                format='%(asctime)s - %(levelname)s - %(message)s')
 
 base_endpoint = "https://developer.citymapper.com/api/1"
 
@@ -79,7 +83,11 @@ def get_journey_info(**kwargs):
     arrival = datetime.datetime(arrival.year, arrival.month, arrival.day)
     arrival += datetime.timedelta(hours=hour_end, minutes=30)
     arrival = str(arrival.astimezone(pytz.timezone('Europe/London')))
-    travel_time = get_travel_time(start, end, arrival)
+    try:
+        travel_time = get_travel_time(start, end, arrival)
+    except requests.exceptions.ReadTimeout:
+        lgg.info("get_travel_time: requests.exceptions.ReadTimeout")
+        travel_time = None
     return {
         "start": start,
         "end": end,
