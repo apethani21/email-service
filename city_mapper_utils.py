@@ -87,7 +87,7 @@ def get_journey_info(**kwargs):
         travel_time = get_travel_time(start, end, arrival)
     except requests.exceptions.ReadTimeout:
         lgg.info("get_travel_time: requests.exceptions.ReadTimeout")
-        travel_time = None
+        travel_time = {"travel_time_minutes": None}
     return {
         "start": start,
         "end": end,
