@@ -6,5 +6,9 @@
     "goodge_street": {
         "latitude": 51.520581,
         "longitude": -0.134331
+    },
+    "tower_hill": {
+        "latitude": 51.51115,
+        "longitude": -0.07470
     }
 }
