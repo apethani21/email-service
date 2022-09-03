@@ -2,11 +2,9 @@ import os
 import ssl
 import sys
 import json
-import pytz
-import pymongo
 import smtplib
 import logging as lgg
-from datetime import time, datetime
+from datetime import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -16,19 +14,18 @@ from news_utils import query_wiki_current_events, query_news_articles
 from city_mapper_utils import get_journey_info
 
 
-lgg.basicConfig(level=lgg.INFO,
-                format='%(asctime)s - %(levelname)s - %(message)s')
+lgg.basicConfig(level=lgg.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
 def get_email_credentials():
-    home = os.path.expanduser('~')
+    home = os.path.expanduser("~")
     with open(f"{home}/keys/gmail/sender_config.json", "r") as f:
         config = json.loads(f.read())
     return config
 
 
 def get_aws_ses_credentials():
-    home = os.path.expanduser('~')
+    home = os.path.expanduser("~")
     with open(f"{home}/keys/aws/ses-credentials.json", "r") as f:
         config = json.loads(f.read())
     return config
@@ -37,9 +34,14 @@ def get_aws_ses_credentials():
 def news_to_html(articles):
     body = ""
     for article in articles:
-        publish_time = article['publishedAt'].replace('T', ' ').replace('Z', ' ')
-        source = article['source']['name']
-        url = article.get('url')
+        publish_time = article["publishedAt"].replace("T", " ").replace("Z", " ")
+        source_info = article["source"]
+        # API seems to be changing back and forth sometimes according to raw docs in mongodb
+        try:
+            source = source_info["name"]
+        except KeyError:
+            source = source_info["Name"]
+        url = article.get("url")
         if url is None:
             headline = f"<b>{article['title']}</b><br>"
         else:
@@ -48,7 +50,7 @@ def news_to_html(articles):
             {headline}
             <i>Source: {source}, {publish_time}</i><br><br>
         """
-        
+
         body += article_body
     return body + "\n<hr>"
 
@@ -56,17 +58,19 @@ def news_to_html(articles):
 def weather_to_html(weather_info):
     html_bodies = []
     for area, weather in weather_info.items():
-        area_clean = area.split('_')
-        area_clean = ' '.join([word.capitalize() for word in area_clean])
+        area_clean = area.split("_")
+        area_clean = " ".join([word.capitalize() for word in area_clean])
         ts = weather["time"]
-        time_clean = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S").strftime("%d %b %H:%M %p")
+        time_clean = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S").strftime(
+            "%d %b %H:%M %p"
+        )
 
         body = f"""\
             <b>Time</b>: {time_clean} -- <b>{area_clean}</b><br>
             <b>Temperature</b>: {round(weather["screenTemperature"], 2)}\u00b0C<br>
         """
 
-        wind_speed = round(weather["windSpeed10m"]*2.23694, 2)
+        wind_speed = round(weather["windSpeed10m"] * 2.23694, 2)
         wind_dir = bearing_to_cardinal(weather["windDirectionFrom10m"])
         body += f"""
         <b>Wind Speed</b>: {wind_speed} mph from the {wind_dir}. <br>
@@ -82,9 +86,9 @@ def weather_to_html(weather_info):
 
 
 def journey_info_to_html(journey_info):
-    clean_start = ' '.join([s.capitalize() for s in journey_info['start'].split('_')])
-    clean_end = ' '.join([s.capitalize() for s in journey_info['end'].split('_')])
-    journey_time = journey_info['travel_time'].get('travel_time_minutes')
+    clean_start = " ".join([s.capitalize() for s in journey_info["start"].split("_")])
+    clean_end = " ".join([s.capitalize() for s in journey_info["end"].split("_")])
+    journey_time = journey_info["travel_time"].get("travel_time_minutes")
     if journey_time is None:
         html = """
         Failed to get journey time information.
@@ -113,7 +117,7 @@ def tweets_to_html(tweets):
 
 def current_events_to_html(current_events):
     if current_events is None:
-        return ''
+        return ""
     header = f"""
              <h2 style="font-size:20px;">
              Current Events - {current_events['date']}
@@ -125,7 +129,11 @@ def current_events_to_html(current_events):
 
 def create_email_html_body(**config):
     weather = query_met_office_prediction(**config)
-    tweets = [tweet for tweet in query_tweets(**config) if "Northern Line" in tweet["full_text"]]
+    tweets = [
+        tweet
+        for tweet in query_tweets(**config)
+        if "Northern Line" in tweet["full_text"]
+    ]
     current_events = query_wiki_current_events()
     news = query_news_articles(**config)
     journey_info = get_journey_info(**config)
@@ -176,8 +184,7 @@ def send_email(html, use_ses=True):
         aws_ses_credentials = get_aws_ses_credentials()
         smtp_username = aws_ses_credentials["smtp-username"]
         smtp_password = aws_ses_credentials["smtp-password"]
-        with smtplib.SMTP("email-smtp.eu-west-2.amazonaws.com",
-                          port=587) as server:
+        with smtplib.SMTP("email-smtp.eu-west-2.amazonaws.com", port=587) as server:
             server.starttls()
             server.login(smtp_username, smtp_password)
             lgg.info("sending message")
@@ -186,9 +193,7 @@ def send_email(html, use_ses=True):
             return
 
     else:
-        with smtplib.SMTP_SSL("smtp.gmail.com",
-                              port=587,
-                              context=context) as server:
+        with smtplib.SMTP_SSL("smtp.gmail.com", port=587, context=context) as server:
             server.login(sender_email, password)
             lgg.info("sending message")
             server.send_message(message, sender_email, receiver_email)
@@ -198,13 +203,15 @@ def send_email(html, use_ses=True):
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    args = dict([arg.split('=') for arg in args])
+    args = dict([arg.split("=") for arg in args])
     try:
-        config_name = args['config']
+        config_name = args["config"]
     except KeyError:
-        raise KeyError("You need to pass a command line argument e.g. config=morning.json")
+        raise KeyError(
+            "You need to pass a command line argument e.g. config=morning.json"
+        )
     lgg.info(f"config: {config_name}")
-    with open(f'./configs/{config_name}', 'r') as f:
+    with open(f"./configs/{config_name}", "r") as f:
         config = json.loads(f.read())
     html = create_email_html_body(**config)
     send_email(html)

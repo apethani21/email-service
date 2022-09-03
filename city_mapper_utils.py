@@ -5,22 +5,20 @@ import datetime
 import requests
 import logging as lgg
 
-lgg.basicConfig(level=lgg.INFO,
-                format='%(asctime)s - %(levelname)s - %(message)s')
+lgg.basicConfig(level=lgg.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 base_endpoint = "https://developer.citymapper.com/api/1"
 
+
 def _get_citymapper_auth():
-    home = os.path.expanduser('~')
-    with open(f"{home}/keys/city-mapper/api_key", 'r') as f:
-        key = f.read().rstrip('\n')
-    return {
-         "key": key
-    }
+    home = os.path.expanduser("~")
+    with open(f"{home}/keys/city-mapper/api_key", "r") as f:
+        key = f.read().rstrip("\n")
+    return {"key": key}
 
 
 def get_location_config(area=None):
-    with open(f'./configs/location.json', 'r') as f:
+    with open(f"./configs/location.json", "r") as f:
         location = json.loads(f.read())
     if area is None:
         return location
@@ -40,31 +38,26 @@ def get_travel_time(start, end, arrival_time):
         "startcoord": f"{start_lat},{start_long}",
         "endcoord": f"{end_lat},{end_long}",
         "time": arrival_time,
-        **_get_citymapper_auth()
+        **_get_citymapper_auth(),
     }
-    r = requests.get(url=f"{base_endpoint}/traveltime",
-                     params=params,
-                     timeout=1)
+    r = requests.get(url=f"{base_endpoint}/traveltime", params=params, timeout=1)
     r.raise_for_status()
     return r.json()
 
 
 def get_single_point_coverage(location):
     """
-    Response JSON like 
+    Response JSON like
     {'points': [{'covered': True, 'coord': [51.583017, -0.226472]}]}
     """
 
     location_config = get_location_config()
     latitude = location_config[location]["latitude"]
     longitude = location_config[location]["longitude"]
-    params = {
-        "coord": f"{latitude},{longitude}",
-        **_get_citymapper_auth()
-    }
-    r = requests.get(url=f"{base_endpoint}/singlepointcoverage",
-                     params=params,
-                     timeout=1)
+    params = {"coord": f"{latitude},{longitude}", **_get_citymapper_auth()}
+    r = requests.get(
+        url=f"{base_endpoint}/singlepointcoverage", params=params, timeout=1
+    )
     r.raise_for_status()
     return r.json()
 
@@ -82,14 +75,10 @@ def get_journey_info(**kwargs):
     arrival = datetime.datetime.now().date()
     arrival = datetime.datetime(arrival.year, arrival.month, arrival.day)
     arrival += datetime.timedelta(hours=hour_end, minutes=30)
-    arrival = str(arrival.astimezone(pytz.timezone('Europe/London')))
+    arrival = str(arrival.astimezone(pytz.timezone("Europe/London")))
     try:
         travel_time = get_travel_time(start, end, arrival)
     except requests.exceptions.ReadTimeout:
         lgg.info("get_travel_time: requests.exceptions.ReadTimeout")
         travel_time = {"travel_time_minutes": None}
-    return {
-        "start": start,
-        "end": end,
-        "travel_time": travel_time
-    }
+    return {"start": start, "end": end, "travel_time": travel_time}
