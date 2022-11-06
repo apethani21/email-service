@@ -1,10 +1,11 @@
-import os
 import json
-import pytz
-import pymongo
-import requests
 import logging as lgg
-from datetime import time, datetime
+import os
+from datetime import datetime, time
+
+import pymongo
+import pytz
+import requests
 
 lgg.basicConfig(level=lgg.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 

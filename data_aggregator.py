@@ -1,11 +1,12 @@
-import sys
 import logging as lgg
+import sys
 from datetime import datetime, timedelta
 
 from pymongo import MongoClient
+
+from met_office_utils import get_location_config, get_met_office_weather
+from news_utils import get_google_news, get_google_news_sources, get_wiki_current_events
 from tweepy_utils import TweetGetter
-from met_office_utils import get_met_office_weather, get_location_config
-from news_utils import get_google_news_sources, get_google_news, get_wiki_current_events
 
 lgg.basicConfig(level=lgg.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
