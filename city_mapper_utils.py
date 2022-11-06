@@ -1,9 +1,10 @@
-import os
-import json
-import pytz
 import datetime
-import requests
+import json
 import logging as lgg
+import os
+
+import pytz
+import requests
 
 lgg.basicConfig(level=lgg.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 

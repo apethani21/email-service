@@ -1,18 +1,17 @@
+import json
+import logging as lgg
 import os
+import smtplib
 import ssl
 import sys
-import json
-import smtplib
-import logging as lgg
 from datetime import datetime
-from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
-from tweepy_utils import query_tweets
-from met_office_utils import query_met_office_prediction, bearing_to_cardinal
-from news_utils import query_wiki_current_events, query_news_articles
 from city_mapper_utils import get_journey_info
-
+from met_office_utils import bearing_to_cardinal, query_met_office_prediction
+from news_utils import query_news_articles, query_wiki_current_events
+from tweepy_utils import query_tweets
 
 lgg.basicConfig(level=lgg.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 

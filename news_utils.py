@@ -1,10 +1,11 @@
+import logging as lgg
 import os
+from datetime import datetime, time
+from time import sleep
+
 import bs4
 import pymongo
 import requests
-import logging as lgg
-from time import sleep
-from datetime import datetime, time
 from newsapi import NewsApiClient
 
 required_sources = (
