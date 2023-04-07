@@ -1,5 +1,5 @@
 import json
-import logging as lgg
+import logging as log
 import os
 from datetime import datetime, time
 
@@ -7,7 +7,7 @@ import pymongo
 import pytz
 import requests
 
-lgg.basicConfig(level=lgg.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+log.basicConfig(level=log.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
 def get_met_office_credentials():
@@ -97,12 +97,15 @@ def query_met_office_prediction(**kwargs):
         latest_predictions = collection.find_one(
             filter={"_area": area}, sort=[("_id", -1)]
         )
+        if not latest_predictions:
+            log.info(f"No predictions found, check you have data for the provided {area}")
+            return predictions
         time_series = latest_predictions["features"][0]["properties"]["timeSeries"]
         for datapoint in time_series:
             if datapoint["time"] == timestamp:
                 predictions[area] = datapoint
                 predictions[area]["time"] = utc_to_gmt(predictions[area]["time"])
-    lgg.info(
+    log.info(
         f"expected {len(weather_config)} weather predictions, got {len(predictions)} weather predictions"
     )
     return predictions

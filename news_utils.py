@@ -1,4 +1,4 @@
-import logging as lgg
+import logging as log
 import os
 from datetime import datetime, time
 from time import sleep
@@ -18,7 +18,7 @@ required_sources = (
     "Sky News",
 )
 
-lgg.basicConfig(level=lgg.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+log.basicConfig(level=log.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
 def get_news_api_key():
@@ -46,7 +46,7 @@ def get_google_news(sources, from_param=None):
             sources=sources, from_param=from_param, language="en"
         )
     except requests.exceptions.ReadTimeout as e:
-        lgg.warning(f"requests.exceptions.ReadTimeout - retrying after 5 minutes")
+        log.warning(f"requests.exceptions.ReadTimeout - retrying after 5 minutes")
         sleep(300)
         news = client.get_everything(
             sources=sources, from_param=from_param, language="en"

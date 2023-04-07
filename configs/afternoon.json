@@ -5,10 +5,10 @@
     },
     "weather": [
         {
-            "hendon_central": 20
+            "hendon_central": 19
         },
         {
-            "tower_hill": 19
+            "piccadilly_circus": 18
         }
     ],
     "articles": 10
