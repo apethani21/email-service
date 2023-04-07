@@ -10,5 +10,9 @@
     "tower_hill": {
         "latitude": 51.51115,
         "longitude": -0.07470
+    },
+    "piccadilly_circus": {
+        "latitude": 51.510067,
+        "longitude": -0.133869
     }
 }

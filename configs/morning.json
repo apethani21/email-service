@@ -1,7 +1,15 @@
 {
-    "twitter": {"screen_name": "tweetthetube",
-                "tweet_count": 10},
-    "weather": [{"hendon_central": 8},
-                {"tower_hill": 9}],
+    "twitter": {
+        "screen_name": "tweetthetube",
+        "tweet_count": 10
+    },
+    "weather": [
+        {
+            "hendon_central": 8
+        },
+        {
+            "piccadilly_circus": 9
+        }
+    ],
     "articles": 10
 }
