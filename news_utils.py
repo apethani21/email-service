@@ -8,16 +8,6 @@ import pymongo
 import requests
 from newsapi import NewsApiClient
 
-required_sources = (
-    "BBC News",
-    "Bloomberg",
-    "CNBC",
-    "Financial Times",
-    "Politico",
-    "Reuters",
-    "Sky News",
-)
-
 log.basicConfig(level=log.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 

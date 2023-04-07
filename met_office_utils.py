@@ -98,7 +98,9 @@ def query_met_office_prediction(**kwargs):
             filter={"_area": area}, sort=[("_id", -1)]
         )
         if not latest_predictions:
-            log.info(f"No predictions found, check you have data for the provided {area}")
+            log.info(
+                f"No predictions found, check you have data for the provided {area}"
+            )
             return predictions
         time_series = latest_predictions["features"][0]["properties"]["timeSeries"]
         for datapoint in time_series:
