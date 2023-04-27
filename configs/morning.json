@@ -5,10 +5,10 @@
     },
     "weather": [
         {
-            "hendon_central": 8
+            "hendon_central": 6
         },
         {
-            "piccadilly_circus": 9
+            "piccadilly_circus": 7
         }
     ],
     "articles": 10
