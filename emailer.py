@@ -8,7 +8,6 @@ from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from city_mapper_utils import get_journey_info
 from met_office_utils import bearing_to_cardinal, query_met_office_prediction
 from news_utils import query_news_articles, query_wiki_current_events
 from tweepy_utils import query_tweets
@@ -135,14 +134,11 @@ def create_email_html_body(**config):
     ]
     current_events = query_wiki_current_events()
     news = query_news_articles(**config)
-    journey_info = get_journey_info(**config)
 
     weather_html = weather_to_html(weather)
     log.info("weather html body created")
     tweets_html = tweets_to_html(tweets)
     log.info("tweets html body created")
-    journey_time_html = journey_info_to_html(journey_info)
-    log.info("journey time html body created")
     current_events_html = current_events_to_html(current_events)
     log.info("current events html body created")
     news_html = news_to_html(news)
@@ -155,7 +151,6 @@ def create_email_html_body(**config):
               <h2 style="font-size:20px;">Weather</h2> <br>
               {weather_html} <br>
               <h2 style="font-size:20px;">Travel</h2> <br>
-              {journey_time_html}<br>
               {tweets_html} <br>
               {current_events_html} <br>
               <h2 style="font-size:20px;">Latest Headlines</h2> <br>
