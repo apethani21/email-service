@@ -92,10 +92,10 @@ def upload(source, **kwargs):
             )
             latest_timestamp = latest_timestamp.rstrip("Z")
             from_param = datetime.strptime(latest_timestamp, "%Y-%m-%dT%H:%M:%S")
+            lookback_limit = (datetime.now() + timedelta(days=-29, hours=-23)).replace(microsecond=0)
+            from_param = max(from_param, lookback_limit)
             from_param = str(from_param + timedelta(seconds=1))
             from_param = from_param.replace(" ", "T")
-            lookback_limit = datetime.now() + timedelta(days=-29, hours=-23)
-            from_param = max(from_param, lookback_limit.strptime(latest_timestamp, "%Y-%m-%dT%H:%M:%S"))
             kwargs["from_param"] = from_param
             log.info(f"set from_param to {kwargs['from_param']}")
         news = get_google_news(sources=sources, **kwargs)
