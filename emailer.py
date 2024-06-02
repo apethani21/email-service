@@ -127,18 +127,11 @@ def current_events_to_html(current_events):
 
 def create_email_html_body(**config):
     weather = query_met_office_prediction(**config)
-    tweets = [
-        tweet
-        for tweet in query_tweets(**config)
-        if "Northern Line" in tweet["full_text"]
-    ]
     current_events = query_wiki_current_events()
     news = query_news_articles(**config)
 
     weather_html = weather_to_html(weather)
     log.info("weather html body created")
-    tweets_html = tweets_to_html(tweets)
-    log.info("tweets html body created")
     current_events_html = current_events_to_html(current_events)
     log.info("current events html body created")
     news_html = news_to_html(news)
@@ -150,8 +143,6 @@ def create_email_html_body(**config):
             <p style="color:black;">
               <h2 style="font-size:20px;">Weather</h2> <br>
               {weather_html} <br>
-              <h2 style="font-size:20px;">Travel</h2> <br>
-              {tweets_html} <br>
               {current_events_html} <br>
               <h2 style="font-size:20px;">Latest Headlines</h2> <br>
               {news_html} <br>
