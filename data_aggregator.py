@@ -95,7 +95,7 @@ def upload(source, **kwargs):
             from_param = str(from_param + timedelta(seconds=1))
             from_param = from_param.replace(" ", "T")
             lookback_limit = datetime.now() + timedelta(days=-29, hours=-23)
-            from_param = max(from_param, from_param)
+            from_param = max(from_param, lookback_limit)
             kwargs["from_param"] = from_param
             log.info(f"set from_param to {kwargs['from_param']}")
         news = get_google_news(sources=sources, **kwargs)
